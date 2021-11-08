@@ -1,0 +1,156 @@
+const Engine = Matter.Engine;
+const World= Matter.World;
+const Bodies = Matter.Bodies;
+const Constraint = Matter.Constraint;
+
+
+ 
+var particles;
+var plinkos = [];
+var divisions =[];
+var divisionHeight=300;
+var score =0;
+var backgroundImg;
+var bg ;
+
+
+function preload() {
+  
+  getBackgroundImg();
+}
+
+
+function setup() {
+  var canvas = createCanvas(800, 800);
+  engine = Engine.create();
+  world = engine.world;
+  ground = new Ground(width/2,height,width,20);
+
+  //create division objects
+  for (var k = 0; k <=800; k = k + 80) {
+    divisions.push(new Divisions(k, height-divisionHeight/2, 10, divisionHeight));
+  }
+
+  //create 1st row of plinko objects
+  for (var j = 75; j <=width; j=j+50) { 
+    plinkos.push(new Plinko(j,75));
+  }
+
+  //create 2nd row of plinko objects
+  for (var j = 50; j <=width-10; j=j+50) 
+  {
+    plinkos.push(new Plinko(j,175));
+  }
+
+  //create 3rd row of plinko objects
+  for (var j = 70; j <=width; j=j+50)
+ {
+    plinkos.push(new Plinko(j,270));
+ } 
+  //create 4th row of plinko objects
+  for (var j = 50; j <=width-10; j=j+50)
+  {
+     plinkos.push(new Plinko(j,375));
+  }
+
+  //create particle objects
+  
+}
+ 
+
+
+function draw() {
+  
+  
+ 
+  if(backgroundImg){
+    background(backgroundImg);
+}
+
+textSize(50)
+fill("magenta");
+text("Pontuação : "+score,10,50);
+fill("magenta");
+textSize(40)
+text("50", 10, 560);
+text("10", 85, 560);
+text("30", 165, 560);
+text("40", 245, 560);
+text("60", 325, 560);
+text("20", 405, 560);
+text("70", 485, 560);
+text("10", 565, 560);
+text("50", 645, 560);
+text("30", 725, 560); 
+
+ 
+
+  Engine.update(engine);
+  ground.display();
+  
+ 
+  //display the paricles 
+  if(particles != null){
+    particles.display();
+
+}
+  
+  //display the plinkos 
+  for (var i = 0; i < plinkos.length; i++) {
+    plinkos[i].display();   
+  }
+   
+  //display the divisions
+  for (var k = 0; k < divisions.length; k++) {
+    divisions[k].display();
+  }
+
+  
+
+}
+function mousePressed(){
+  
+    particles = new Particle(mouseX, 10, 10, 10);  
+    
+  
+}
+
+async function getBackgroundImg(){
+
+  
+  var response = await fetch("https://worldtimeapi.org/api/timezone/America/Sao_Paulo");
+
+
+  var responseJSON = await response.json();
+  var datetime = responseJSON.datetime;
+
+
+
+  hour = datetime.slice(11,13);
+
+  if(hour>=04 && hour<=06){
+      bg = "sunrise1.png";
+  }else if(hour>=06 && hour<=08){
+      bg = "sunrise2.png";
+  }else if(hour>=08 && hour<=10){
+      bg = "sunrise3.png";
+  }else if(hour>=10 && hour<=14){
+      bg = "sunrise5.png";
+  }else if(hour>=14 && hour<=16){
+      bg = "sunrise6.png";
+  }else if(hour>=16 && hour<=17){
+      bg = "sunset8.png";
+  }else if(hour>=17 && hour<=18){
+      bg = "sunset9.png";
+  }else if(hour>=19 && hour<=20){
+      bg = "sunset11.png";
+  }else{
+      bg = "sunset12.png";
+  }
+
+  backgroundImg = loadImage(bg);
+  console.log(hour);
+}
+
+
+
